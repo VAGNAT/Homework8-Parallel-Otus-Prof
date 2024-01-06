@@ -10,9 +10,9 @@ namespace Homework8_Parallel_Otus_Prof
 {
     public static class Calculate
     {
-        public static int SimpleSum(int[] array)
+        public static long SimpleSum(int[] array)
         {
-            int sum = 0;
+            long sum = 0;
             for (int i = 0; i < array.Length; i++)
             {
                 sum += array[i];
@@ -20,13 +20,13 @@ namespace Homework8_Parallel_Otus_Prof
             return sum;
         }
 
-        public static int ThreadSumWithChunkArray(int[] array)
+        public static long ThreadSumWithChunkArray(int[] array)
         {
-            int sum = default;
+            long sum = default;
             int processorsCount = Environment.ProcessorCount;
             var partionArray = array.Chunk((int)Math.Ceiling(array.Length / (decimal)processorsCount)).ToArray();
 
-            int[] sums = new int[processorsCount];
+            long[] sums = new long[processorsCount];
             Thread[] threads = new Thread[processorsCount];
 
             for (int i = 0; i < processorsCount; i++)
@@ -54,11 +54,11 @@ namespace Homework8_Parallel_Otus_Prof
             return sum;
         }
 
-        public static int ThreadSum(int[] array)
+        public static long ThreadSum(int[] array)
         {
-            int sum = 0;
+            long sum = 0;
             int processorsCount = Environment.ProcessorCount;
-            int[] sums = new int[processorsCount];
+            long[] sums = new long[processorsCount];
             Thread[] threads = new Thread[processorsCount];
 
             for (int i = 0; i < processorsCount; i++)
@@ -89,28 +89,28 @@ namespace Homework8_Parallel_Otus_Prof
             return sum;
         }
 
-        public static int LinqSum(int[] array)
+        public static long ParallelLinqSum(int[] array)
         {
             return array.AsParallel().Aggregate(
-                seed: 0,
+                seed: (long)0,
                 func: (total, next) => total + next,
                 resultSelector: total => total);
         }
 
-        public static int TaskSum(int[] array)
+        public static long TaskSum(int[] array)
         {
-            int sum = 0;
+            long sum = 0;
 
             int processorsCount = Environment.ProcessorCount;
             var partionArray = array.Chunk((int)Math.Ceiling(array.Length / (decimal)processorsCount)).ToArray();
-            var tasks = new Task<int>[processorsCount];
+            var tasks = new Task<long>[processorsCount];
 
             int count = default;
             foreach (var arr in partionArray)
             {
                 tasks[count] = Task.Run(() =>
                 {
-                    int localSum = default;
+                    long localSum = default;
                     for (int i = 0; i < arr.Length; i++)
                     {
                         localSum += arr[i];
@@ -129,6 +129,31 @@ namespace Homework8_Parallel_Otus_Prof
             }
 
             return sum;
+        }
+
+        public static long ParallelSum(int[] array)
+        {
+            long sum = 0;
+
+            int processorsCount = Environment.ProcessorCount;
+            var partionArray = array.Chunk((int)Math.Ceiling(array.Length / (decimal)processorsCount)).ToArray();
+
+            Parallel.ForEach(partionArray, (arr) =>
+            {
+                long localSum = default;
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    localSum += arr[i];
+                }
+                sum += localSum;
+            });
+
+            return sum;
+        }
+
+        public static long LinqSum(int[] array)
+        {
+            return array.Sum(item=>(long)item);
         }
     }
 }

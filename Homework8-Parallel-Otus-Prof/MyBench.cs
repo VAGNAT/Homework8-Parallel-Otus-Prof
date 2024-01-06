@@ -26,7 +26,7 @@ namespace Homework8_Parallel_Otus_Prof
         public void SimpleSum()
         {
             Calculate.SimpleSum(data!);
-        }               
+        }
 
         [Benchmark]
         public void LinqSum()
@@ -35,9 +35,9 @@ namespace Homework8_Parallel_Otus_Prof
         }
 
         [Benchmark]
-        public void TaskSum()
+        public void ParallelLinqSum()
         {
-            Calculate.TaskSum(data!);
+            Calculate.ParallelLinqSum(data!);
         }
 
         [Benchmark]
@@ -47,9 +47,21 @@ namespace Homework8_Parallel_Otus_Prof
         }
 
         [Benchmark]
+        public void ParallelSum()
+        {
+            Calculate.ParallelSum(data!);
+        }        
+
+        [Benchmark]
+        public void TaskSum()
+        {
+            Calculate.TaskSum(data!);
+        }
+
+        [Benchmark]
         public void ThreadSumWithChunkArray()
         {
             Calculate.ThreadSumWithChunkArray(data!);
-        }        
+        }      
     }
 }
